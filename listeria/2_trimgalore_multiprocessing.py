@@ -7,7 +7,7 @@ from multiprocessing.pool import ThreadPool
 
 def run_trimgalore(f1):
   f2 = f1.replace("_R1.fastq.gz", "_R2.fastq.gz")
-  cmd = "trim_galore --cores 1 --fastqc --paired --gzip -o trimmed_reads {1} {2}".format(odir, f1, f2)
+  cmd = "trim_galore --cores 1 --fastqc --paired --gzip -o trimmed_reads {0} {1}".format(f1, f2)
   os.system(cmd)
 
 if __name__ == "__main__":
