@@ -183,7 +183,7 @@ counts_summary$mapped <- merged_total_counts$mapped
 counts_summary
 
 # create missing column (total number of mapped reads, minus reads assigned to any biotype)
-counts_summary$missing <- counts_summary$mapped - rowSums(counts_summary[,4:(ncol(counts_summary)-1)])
+counts_summary$missing <- counts_summary$mapped - rowSums(counts_summary[,all_biotypes])
 counts_summary
 
 # create other column (total number of mapped reads, minus reads assigned to protein-coding genes)
