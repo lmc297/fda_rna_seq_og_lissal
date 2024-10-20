@@ -76,7 +76,7 @@ run.fisher <- function(obj, algorithm, topNodes, pval, correct=NULL){
 ####################################### load/clean input data from DESeq
 
 # load annotated DESeq results
-crf.og <- read.delim(file = "../annot_deseq_ultrasound_vs_water.tsv", 
+crf.og <- read.delim(file = "annot_deseq_ultrasound_vs_water.tsv", 
                   header = T, sep = "\t", 
                   stringsAsFactors = F, 
                   check.names = F, row.names = 1)
@@ -95,7 +95,7 @@ crf <- crf[!duplicated(crf), ]
 dim(crf)
 
 # read gene2GO mappings, just for fun
-geneID2GO <- readMappings(file = "../../eggnog/eggnog.tsv")
+geneID2GO <- readMappings(file = "eggnog/eggnog.tsv")
 str(head(geneID2GO))
 geneID2GO[["locus"]] <- NULL
 str(head(geneID2GO))
@@ -136,7 +136,7 @@ table(crf.ranked)
 # create new topGO object with biological process
 bgc.bp <- new("topGOdata", ontology="BP", allGenes=crf.ranked,
               annotationFun=annFUN.file,
-              file = "../../eggnog/eggnog.tsv",
+              file = "eggnog/eggnog.tsv",
               nodeSize=3)
 
 # run topGO enrichment with weight01 algorithm and all nodes
@@ -158,7 +158,7 @@ dev.off()
 # create new topGO object with molecular function
 bgc.mf <- new("topGOdata", ontology="MF", allGenes=crf.ranked,
               annotationFun=annFUN.file,
-              file = "../../eggnog/eggnog.tsv",
+              file = "eggnog/eggnog.tsv",
               nodeSize=3)
 
 # run topGO enrichment with weight01 algorithm and all nodes
@@ -179,7 +179,7 @@ dev.off()
 # create new topGO object with cellular component
 bgc.cc <- new("topGOdata", ontology="CC", allGenes=crf.ranked,
               annotationFun=annFUN.file,
-              file = "../../eggnog/eggnog.tsv",
+              file = "eggnog/eggnog.tsv",
               nodeSize=3)
 
 # run topGO enrichment with weight01 algorithm and all nodes
