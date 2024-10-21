@@ -4,6 +4,7 @@ import sys, os, glob
 from collections import Counter
 from Bio import SeqIO
 
+# create ref2go, which maps eggnog genes to GO terms
 ref2go = {}
 with open("out.emapper.annotations", "r") as infile:
 	for line in infile:
@@ -15,9 +16,13 @@ with open("out.emapper.annotations", "r") as infile:
 			if "GO" in allgo:
 				ref2go[gene] = allgo
 
+# create eggnog.tsv and print header line
 with open("eggnog.tsv", "a") as outfile:
 	print("locus" + "\t" + "terms", file = outfile)
 
+# parse eggnog queries fasta
+# for each gene, get its eggnog GO terms
+# if available, print gene-to-GO mappings to eggnog.tsv
 with open("queries.raw", "r") as infile:
 	for record in SeqIO.parse(infile, "fasta"):
 		seqdes = str(record.description).strip()
