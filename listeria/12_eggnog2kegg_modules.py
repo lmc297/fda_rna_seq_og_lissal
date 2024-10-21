@@ -4,6 +4,7 @@ import sys, os, glob
 from collections import Counter
 from Bio import SeqIO
 
+# make ref2go, which maps eggnog genes to kegg modules
 ref2go = {}
 with open("out.emapper.annotations", "r") as infile:
 	for line in infile:
@@ -17,6 +18,8 @@ with open("out.emapper.annotations", "r") as infile:
 				if ag.strip() != "-":
 					ref2go[gene].append(ag.strip())
 
+# parse queries fasta supplied to eggnog mapper
+# if gene has kegg modules linked, print to kegg_modules.tsv
 with open("queries.raw", "r") as infile:
 	for record in SeqIO.parse(infile, "fasta"):
 		seqdes = str(record.description).strip()
