@@ -186,8 +186,8 @@ counts_summary
 counts_summary$missing <- counts_summary$mapped - rowSums(counts_summary[,all_biotypes])
 counts_summary
 
-# create other column (total number of mapped reads, minus reads assigned to protein-coding genes)
-counts_summary$other <- counts_summary$mapped - counts_summary$protein_coding
+# create nonprot column (total number of mapped reads, minus reads assigned to protein-coding genes)
+counts_summary$nonprot <- counts_summary$mapped - counts_summary$protein_coding
 counts_summary
 
 # save counts_summary as a TSV file
@@ -195,15 +195,15 @@ write.table(x = counts_summary, file = "counts_summary.tsv",
   col.names = T, row.names = F,
   sep = "\t", quote = F)
 
-############# Plot read counts for protein-coding genes vs everything else (other column)
+############# Plot read counts for protein-coding genes vs everything else (nonprot column)
 
-# create counts_melt, a data frame with read counts for protein-coding genes vs everything else (other column)
+# create counts_melt, a data frame with read counts for protein-coding genes vs everything else (nonprot column)
 counts_melt <- reshape2::melt(
   counts_summary,
   id.vars = c("sample"),
   measure.vars = c(
     "protein_coding",
-    "other"
+    "nonprot"
   )
 )
 
@@ -223,10 +223,10 @@ p1 <- ggplot(
   scale_color_manual(values = c("turquoise3", "deeppink3"))
 p1
 
-# create propCols, a data frame of the proportion of reads assigned to protein-coding genes vs everything else (other column)
+# create propCols, a data frame of the proportion of reads assigned to protein-coding genes vs everything else (nonprot column)
 propCols <- counts_summary[c(
   "protein_coding",
-  "other"
+  "nonprot"
 )] / counts_summary$mapped # divide by total number of mapped reads for each sample
 
 # sanity check: each row should sum to 1
@@ -235,13 +235,13 @@ rowSums(propCols)
 # add sample name column to propCols
 propCols$sample <- counts_summary$sample
 
-# create prop_melt, a data frame with proportion of reads assigned to protein-coding genes vs everything else (other column)
+# create prop_melt, a data frame with proportion of reads assigned to protein-coding genes vs everything else (nonprot column)
 prop_melt <- reshape2::melt(
   propCols,
   id.vars = c("sample"),
   measure.vars = c(
     "protein_coding",
-    "other"
+    "nonprot"
   )
 )
 
