@@ -111,7 +111,7 @@ run.kegg.module <- function(genes.og, updown, fc, p.cutoff, p.correction, treatm
     mkk2 <- GSEA(geneList = allgenes.ranked,
                  TERM2GENE = term2gene,
                  minGSSize = 1,
-                 maxGSSize = 1,
+                 maxGSSize = 1e9,
                  eps = 0,
                  pvalueCutoff = p.cutoff,
                  pAdjustMethod = p.correction,
@@ -433,7 +433,7 @@ summary(final.module.overrep$log10p)
 pdf(file = "plot_module_overrep.pdf",width = 15, height = 11)
 plot.module.overrep <- ggplot(final.module.overrep, aes(x=reorder(KEGG_term, log10p), y=log10p, fill = treatment)) +
     stat_summary(geom = "bar", fun.y = mean, position = "dodge") +
-    xlab("KEGG module") +
+    xlab("KEGG Module") +
     ylab("-log10 P-Value") +
     scale_fill_manual(values = c("#33BBEE", "#EE3377", "yellow")) +
     theme_bw(base_size=12) +
@@ -445,15 +445,31 @@ dev.off()
 # add KEGG_term column to final.pathway.gsea
 final.pathway.gsea$KEGG_term <- final.pathway.gsea$Description
 
-# plot GSEA results
+# plot pathway GSEA results
 pdf(file = "plot_pathway_gsea.pdf",width = 15, height = 11)
 plot.pathway.gsea <- ggplot(final.pathway.gsea, aes(x=reorder(KEGG_term, NES), y=NES, fill = treatment)) +
     stat_summary(geom = "bar", fun.y = mean, position = "dodge") +
     xlab("KEGG Pathway") +
-    ylab("-log10 P-Value") +
+    ylab("NES") +
     scale_fill_manual(values = c("#33BBEE", "#EE3377", "yellow")) +
     theme_bw(base_size=12) +
 guides(colour=guide_legend(override.aes=list(size=2.5))) +
     coord_flip()
 plot.pathway.gsea
+dev.off()
+
+# add KEGG_term column to final.module.gsea
+final.module.gsea$KEGG_term <- final.module.gsea$Description
+
+# plot module GSEA results
+pdf(file = "plot_module_gsea.pdf",width = 15, height = 11)
+plot.module.gsea <- ggplot(final.module.gsea, aes(x=reorder(KEGG_term, NES), y=NES, fill = treatment)) +
+  stat_summary(geom = "bar", fun.y = mean, position = "dodge") +
+  xlab("KEGG Module") +
+  ylab("NES") +
+  scale_fill_manual(values = c("#33BBEE", "#EE3377", "yellow")) +
+  theme_bw(base_size=12) +
+  guides(colour=guide_legend(override.aes=list(size=2.5))) +
+  coord_flip()
+plot.module.gsea
 dev.off()
