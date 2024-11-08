@@ -42,8 +42,10 @@ run.fisher <- function(obj, algorithm, topNodes, pval, correct=NULL){
   goEnrichment <- goEnrichment.full
   goEnrichment$Test <- as.numeric(goEnrichment$Test)
   goEnrichment <- goEnrichment[goEnrichment$Test<pval,]
+  print(nrow(goEnrichment))
   
   # make a pretty picture
+  if (nrow(goEnrichment)>= 1){
   goEnrichment <- goEnrichment[,c("GO.ID","Term","Test")]
   goEnrichment$Term <- paste(goEnrichment$GO.ID, goEnrichment$Term, sep=", ")
   goEnrichment$Term <- factor(goEnrichment$Term, levels=rev(goEnrichment$Term))
@@ -66,6 +68,11 @@ run.fisher <- function(obj, algorithm, topNodes, pval, correct=NULL){
             title=element_text(size=18)) +
           guides(colour=guide_legend(override.aes=list(size=2.5))) +
           coord_flip()
+  }
+  else{
+    goEnrichment <- NULL
+    p <- NULL
+  }
   
   # return multiple elements
   return(list("df" = goEnrichment.full, "sig.df" = goEnrichment, "plot" = p, "ntest" = ntest))
@@ -186,25 +193,23 @@ bgc.cc <- new("topGOdata", ontology="CC", allGenes=crf.ranked,
 bgc.cc.result <- run.fisher(obj = bgc.cc, algorithm = "weight01",
                         topNodes = 73, pval = 0.05)
 
+# no significant results
 dim(bgc.cc.result$df)
 dim(bgc.cc.result$sig.df)
 bgc.cc.result$ntest
-
-# plot results
-pdf(file = "go_chlorine_cc_down.pdf", width = 11, height = 8.5)
-bgc.cc.result$plot
-dev.off()
 
 ####################################### create final data frame
 
 # create final data frame with all results
 final.df <- rbind(bgc.bp.result$df,
-                  bgc.mf.result$df)
+                  bgc.mf.result$df,
+                  bgc.cc.result$df)
 head(final.df)
 
 # add ontology column
 final.df$Ontology <- c(rep("BP", nrow(bgc.bp.result$df)),
-                       rep("MF", nrow(bgc.mf.result$df)))
+                       rep("MF", nrow(bgc.mf.result$df)),
+                       rep("CC", nrow(bgc.cc.result$df)))
 table(final.df$Ontology)
 
 # save results as TSV

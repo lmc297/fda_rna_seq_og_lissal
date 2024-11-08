@@ -42,7 +42,9 @@ run.fisher <- function(obj, algorithm, topNodes, pval, correct=NULL){
   goEnrichment <- goEnrichment.full
   goEnrichment$Test <- as.numeric(goEnrichment$Test)
   goEnrichment <- goEnrichment[goEnrichment$Test<pval,]
+  print(nrow(goEnrichment))
   
+  if (nrow(goEnrichment)>=1){
   # make a pretty picture
   goEnrichment <- goEnrichment[,c("GO.ID","Term","Test")]
   goEnrichment$Term <- paste(goEnrichment$GO.ID, goEnrichment$Term, sep=", ")
@@ -66,7 +68,11 @@ run.fisher <- function(obj, algorithm, topNodes, pval, correct=NULL){
             title=element_text(size=18)) +
           guides(colour=guide_legend(override.aes=list(size=2.5))) +
           coord_flip()
-  
+  }
+  else{
+    goEnrichment <- NULL
+    p <- NULL
+  }
   # return multiple elements
   return(list("df" = goEnrichment.full, "sig.df" = goEnrichment, "plot" = p, "ntest" = ntest))
   
@@ -144,14 +150,10 @@ bgc.bp.result <- run.fisher(obj = bgc.bp, algorithm = "weight01",
                         topNodes = 883, pval = 0.05)
 
 
+# no significant results
 dim(bgc.bp.result$df)
 dim(bgc.bp.result$sig.df)
 bgc.bp.result$ntest
-
-# plot results
-pdf(file = "go_chlorine_bp_up.pdf", width = 11, height = 8.5)
-bgc.bp.result$plot
-dev.off()
 
 ####################################### test molecular function
 
@@ -198,12 +200,14 @@ dev.off()
 ####################################### create final data frame
 
 # create final data frame with all results
-final.df <- rbind(bgc.mf.result$df,
+final.df <- rbind(bgc.bp.result$df,
+                  bgc.mf.result$df,
                   bgc.cc.result$df)
 head(final.df)
 
 # add ontology column
-final.df$Ontology <- c(rep("MF", nrow(bgc.mf.result$df)),
+final.df$Ontology <- c(rep("BP", nrow(bgc.bp.result$df)),
+                       rep("MF", nrow(bgc.mf.result$df)),
                        rep("CC", nrow(bgc.cc.result$df)))
 table(final.df$Ontology)
 
